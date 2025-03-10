@@ -3,6 +3,7 @@ dataset/*
 
 model-trained/*
 !model-trained/readme.md
+!model-trained/curve.png
 
 __pycache__
 .DS_Store
