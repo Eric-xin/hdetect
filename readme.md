@@ -16,7 +16,7 @@ The overall architecture is as follows:
                            Input Text
                                 │
                 ┌───────────────┴───────────────┐
-                │         Tokenization        │
+                │         Tokenization          │
                 └───────────────┬───────────────┘
                                 │
          ┌──────────────────────┼──────────────────────┐
