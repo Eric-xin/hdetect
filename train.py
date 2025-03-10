@@ -56,8 +56,8 @@ def main(args):
     # Automatically select CUDA if available, else MPS if available, else CPU.
     if torch.cuda.is_available():
         device = torch.device("cuda")
-    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-        device = torch.device("mps")
+    # elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+    #     device = torch.device("mps")
     else:
         device = torch.device("cpu")
     print(f"Using device: {device}")

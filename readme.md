@@ -60,8 +60,8 @@ The overall architecture is as follows:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/yourproject.git
-   cd yourproject
+   git clone https://github.com/Eric-xin/hdetect.git
+   cd hdetect
    ```
 
 2. **Create a virtual environment (optional but recommended):**
@@ -71,20 +71,17 @@ The overall architecture is as follows:
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
+   or use `conda`:
+
+   ```bash
+   conda create --name hdetect python=3.8
+   conda activate hdetect
+   ```
+
 3. **Install dependencies:**
 
    ```bash
    pip install -r requirements.txt
-   ```
-
-   Example `requirements.txt`:
-
-   ```
-   torch
-   transformers
-   pandas
-   tqdm
-   tensorboard
    ```
 
 ## Usage
@@ -117,13 +114,38 @@ python inference.py --input_model multiencoder_model.pt --texts "I love sunny da
 
 You can also run the interactive CLI by executing the inference script without text arguments, then typing input interactively.
 
+## Project Structure
+
+```
+hdetect/
+├── utils/
+│   ├── __init__.py
+│   └── dataloader.py         # Data loading and preprocessing
+├── model/
+│   ├── __init__.py
+│   └── model.py              # MultiEncoderClassifier definition
+├── train.py                  # Train
+├── inference.py              # Inference
+├── interative.py              # Interactive CLI for inference
+├── README.md                 # This file
+└── requirements.txt          # Python dependencies
+```
+
 ## Additional Features
 
 - **TensorBoard Integration:**  
   Training logs (loss per epoch) are saved in a specified log directory for monitoring with TensorBoard.
 
+  open TensorBoard with:
+
+  ```bash
+   tensorboard --logdir logs
+   ```
+
 - **Device Selection:**  
   The code automatically selects CUDA if available (or falls back to CPU/MPS).
+
+  Note that the operator 'aten::cumsum.out' is not currently implemented in MPS backend. For this reason, the MPS backend is commented out in the code by default.
 
 - **Zipping Logs:**  
   You can easily add a script to zip your log directory after training if needed.
@@ -131,6 +153,10 @@ You can also run the interactive CLI by executing the inference script without t
 ## Model Architecture Illustration
 
 The model takes an input text and processes it through three separate pretrained encoders (BERT, XLM-RoBERTa, mT5). Their outputs are concatenated to form a comprehensive representation, which is then used by a classification head to determine if the text is offensive (OFF) or not (NOT). This multi-encoder design allows the model to leverage complementary information from different pretrained models, resulting in a more robust representation for offensive language detection.
+
+## Pretrained Models
+Find the pretrained model [here](https://drive.google.com/file/d/1MJ7AHiumIpTMJZAqJKyj8eCXeGhHr4-o/view?usp=sharing). The model can also be downloaded with model-trained/download_model.py.
+For more information, see the [model-trained](model-trained) directory.
 
 ## Contact
 
