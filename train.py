@@ -7,7 +7,8 @@ import argparse
 from tqdm import tqdm
 
 # Import your custom modules (adjust the paths as necessary)
-from utils.dataloader import OLIDDataset
+# from utils.dataloader import OLIDDataset
+from utils import OLIDDataset
 from model import MultiEncoderClassifier
 
 def train_epoch(model, dataloader, optimizer, device, 
