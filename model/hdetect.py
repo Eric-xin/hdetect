@@ -3,13 +3,13 @@ import torch.nn as nn
 from transformers import BertModel, XLMRobertaModel, MT5ForConditionalGeneration
 
 class MultiEncoderClassifier(nn.Module):
-    def __init__(self, num_labels_a=2, num_labels_b=2, dropout_prob=0.1):
+    def __init__(self, num_labels_a=2, dropout_prob=0.1):
         """
         Multi-encoder classifier that fuses representations from:
          - BERT (multilingual cased)
          - XLM-RoBERTa (base)
          - mT5 (using its encoder)
-        and applies two separate classification heads for Subtask A and Subtask B.
+        and applies a classification head for Task A (offensive language identification).
         """
         super(MultiEncoderClassifier, self).__init__()
         
@@ -26,22 +26,13 @@ class MultiEncoderClassifier(nn.Module):
         # Combined representation size
         combined_size = bert_hidden + xlmr_hidden + mt5_hidden
         
-        # Classification head for Subtask A (e.g., NOT vs OFF)
+        # Classification head for Task A (e.g., NOT vs OFF)
         self.classifier_a = nn.Sequential(
             nn.Dropout(dropout_prob),
             nn.Linear(combined_size, combined_size // 2),
             nn.ReLU(),
             nn.Dropout(dropout_prob),
             nn.Linear(combined_size // 2, num_labels_a)
-        )
-        
-        # Classification head for Subtask B (e.g., UNT vs TIN)
-        self.classifier_b = nn.Sequential(
-            nn.Dropout(dropout_prob),
-            nn.Linear(combined_size, combined_size // 2),
-            nn.ReLU(),
-            nn.Dropout(dropout_prob),
-            nn.Linear(combined_size // 2, num_labels_b)
         )
         
     def forward(self, input_ids_bert, attention_mask_bert,
@@ -59,10 +50,9 @@ class MultiEncoderClassifier(nn.Module):
         mt5_encoder_outputs = self.mt5.encoder(input_ids=input_ids_mt5, attention_mask=attention_mask_mt5)
         mt5_cls = mt5_encoder_outputs.last_hidden_state[:, 0, :]  # simple pooling strategy
         
-        # Concatenate the representations
+        # Concatenate the representations from all three encoders
         combined = torch.cat([bert_cls, xlmr_cls, mt5_cls], dim=1)
         
-        # Get logits for each subtask
+        # Compute logits for Task A using the classification head.
         logits_a = self.classifier_a(combined)
-        logits_b = self.classifier_b(combined)
-        return logits_a, logits_b
+        return logits_a

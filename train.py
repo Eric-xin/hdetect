@@ -40,7 +40,7 @@ def train_epoch(model, dataloader, optimizer, device,
         
         optimizer.zero_grad()
         # Get outputs; we ignore the second output (for Task B)
-        logits_a, _ = model(input_ids_bert, attention_mask_bert,
+        logits_a = model(input_ids_bert, attention_mask_bert,
                             input_ids_xlmr, attention_mask_xlmr,
                             input_ids_mt5, attention_mask_mt5)
         loss_a = criterion(logits_a, labels_a)
@@ -72,7 +72,7 @@ def main(args):
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     
     # Initialize model (we still load two heads, but we only use Task A head here)
-    model = MultiEncoderClassifier(num_labels_a=2, num_labels_b=2)
+    model = MultiEncoderClassifier(num_labels_a=2)
     model.to(device)
     
     optimizer = AdamW(model.parameters(), lr=args.lr)

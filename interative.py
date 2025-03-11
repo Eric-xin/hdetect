@@ -12,7 +12,7 @@ else:
 print(f"Using device: {device}")
 
 # Load the trained model checkpoint.
-model = MultiEncoderClassifier(num_labels_a=2, num_labels_b=2)
+model = MultiEncoderClassifier(num_labels_a=2)
 state_dict = torch.load("model-trained/multiencoder_model.pt", map_location=device)
 model.load_state_dict(state_dict, strict=False)
 # non strict loading
@@ -44,7 +44,7 @@ def inference(model, text, device, bert_tokenizer, xlmr_tokenizer, mt5_tokenizer
         attention_mask_mt5 = mt5_enc['attention_mask'].to(device)
         
         # Run inference; only Task A output is used.
-        logits_a, _ = model(input_ids_bert, attention_mask_bert,
+        logits_a = model(input_ids_bert, attention_mask_bert,
                             input_ids_xlmr, attention_mask_xlmr,
                             input_ids_mt5, attention_mask_mt5)
         preds_a = torch.argmax(logits_a, dim=1)
